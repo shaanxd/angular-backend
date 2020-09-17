@@ -8,6 +8,7 @@ const wrap = require('./util/wrap');
 const CustomError = require('./exception/error');
 
 const productRoutes = require('./routes/product');
+const authenticationRoutes = require('./routes/auth');
 
 const PORT = process.env.PORT || 8080;
 const {DB_NAME, DB_PORT, DB_HOST} = process.env;
@@ -19,6 +20,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/auth', authenticationRoutes);
 
 app.post('/api/v1/auth/login-user', wrap(async (req, res, next) => {
     const {body: {username, password}} = req;
@@ -41,7 +43,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-mongoose.connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`, {useNewUrlParser: true, useUnifiedTopology: true}).
+mongoose.connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true}).
     then(() => {
         console.log(`Connection to database @ ${DB_HOST} successfull. Starting server now.`);
         app.listen(PORT, () => {
